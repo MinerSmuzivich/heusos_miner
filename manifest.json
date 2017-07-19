@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "HUIOSOs Miner",
+  "description": "This extension will mine HUISO coins on nekto.me",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [{
+		"js": ["miner.js"],
+		"matches": [ "http://nekto.me/chat/*"],
+		"run_at": "document_start"
+	}],
+  "permissions": [
+    "activeTab"
+  ]
+}
