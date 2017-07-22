@@ -50,7 +50,7 @@ async function onlySend(timelag, ...messages) {
 async function waitForResponse() {
   const element = await waitForElementInsertion();
   if (element.classList.contains('window_chat_dialog_block_nekto')) {
-    return element.querySelector('.window_chat_dialog_text').innerHTML;
+    return element.querySelector('.window_chat_dialog_text').textContent;
   }
 }
 
