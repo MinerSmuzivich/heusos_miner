@@ -2,6 +2,10 @@ console.log('So HUIOSOs');
 
 class HuesoDisconnectedError extends Error {}
 
+async function sleep(seconds) {
+  await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+}
+
 function mockConfirmDialog() {
   document.addEventListener('DOMContentLoaded', function() {
      const head = document.getElementsByTagName('head').item(0);
@@ -41,7 +45,7 @@ async function onlySend(timelag, ...messages) {
     throw new BlockDisconnectedError();
   } else {
     const inputDiv = document.querySelector('.emojionearea-editor');
-    await new Promise((resolve) => setTimeout(resolve, timelag * 1000));
+    await sleep(timelag);
     inputDiv.innerHTML = message;
     sendButton.click();
   }
@@ -113,7 +117,7 @@ async function main() {
         await onlySend(1.5, 'добавляйся');
       }
       await onlySend(3, 'lera.lera872');
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await sleep(20);
 
       disconnect();
       startNew();
