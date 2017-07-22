@@ -10,7 +10,7 @@
   },
   "content_scripts": [{
 		"js": ["miner.js"],
-		"matches": [ "http://nekto.me/chat/*"],
+		"matches": ["http://nekto.me/chat/*", "https://nekto.me/chat/*"],
 		"run_at": "document_start"
 	}],
   "permissions": [
