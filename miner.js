@@ -3,7 +3,13 @@ console.log('So HUIOSOs');
 class HuesoDisconnectedError extends Error {}
 
 function mockConfirmDialog() {
-  window.confirm = function() { return true; };
+  document.addEventListener('DOMContentLoaded', function() {
+     const head = document.getElementsByTagName('head').item(0);
+    const js = document.createTextNode('window.confirm = function() { return true; };');
+    const script = document.createElement('script');
+    script.appendChild(js);
+    head.appendChild(script);
+  });
 }
 
 function waitForElementInsertion() {
@@ -67,7 +73,6 @@ function check(string, ...includes) {
 }
 
 function disconnect() {
-  mockConfirmDialog();
   const sendButton = document.getElementById('sendMessageBtn');
   if (sendButton.classList.contains('disabled')) {
     return;
@@ -109,14 +114,18 @@ async function main() {
       }
       await onlySend(3, 'lera.lera872');
       await new Promise((resolve) => setTimeout(resolve, 5000));
+
       disconnect();
       startNew();
     } catch (e) {
       if (e instanceof HuesoDisconnectedError) {
         console.log('Hueso disconnected');
+        startNew();
       }
     }
   }
 }
 
+
+mockConfirmDialog();
 main();
