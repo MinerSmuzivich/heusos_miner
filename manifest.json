@@ -10,6 +10,7 @@
   },
   "content_scripts": [{
 		"js": ["miner.js"],
+    "css": ["panel.css"],
 		"matches": ["http://nekto.me/chat/*", "https://nekto.me/chat/*"],
 		"run_at": "document_start"
 	}],
@@ -20,5 +21,6 @@
   }, 
   "permissions": [
     "activeTab"
-  ]
+  ],
+  "web_accessible_resources": ["panel.html", "panel.js"]
 }

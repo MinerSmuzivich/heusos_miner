@@ -7,13 +7,24 @@ async function sleep(seconds) {
 }
 
 function mockConfirmDialog() {
-  document.addEventListener('DOMContentLoaded', function() {
-     const head = document.getElementsByTagName('head').item(0);
-    const js = document.createTextNode('window.confirm = function() { return true; };');
-    const script = document.createElement('script');
-    script.appendChild(js);
-    head.appendChild(script);
-  });
+  const head = document.getElementsByTagName('head').item(0);
+  const js = document.createTextNode('window.confirm = function() { return true; };');
+  const script = document.createElement('script');
+  script.appendChild(js);
+  head.appendChild(script);
+}
+
+function addPanel() {
+  const panel = document.createElement('miner-panel');
+  panel.setAttribute('id', 'miner-panel');
+  document.body.appendChild(panel);
+}
+
+function registerPanelComponent() {
+  const script = document.createElement('link');
+  script.setAttribute('href', chrome.extension.getURL("panel.html"));
+  script.setAttribute('rel', 'import');
+  document.body.appendChild(script);
 }
 
 function waitForElementInsertion() {
@@ -130,6 +141,9 @@ async function main() {
   }
 }
 
-
-mockConfirmDialog();
+document.addEventListener('DOMContentLoaded', function() {
+  mockConfirmDialog();
+  registerPanelComponent();
+  addPanel();
+});
 main();
