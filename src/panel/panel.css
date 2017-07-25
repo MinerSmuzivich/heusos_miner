@@ -1,0 +1,11 @@
+#miner-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 300px;
+  height: calc(50px + 38px);
+  z-index: 10000;
+}
