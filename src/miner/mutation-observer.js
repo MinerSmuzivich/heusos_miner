@@ -1,7 +1,10 @@
 "use strict";
 import {dispatch} from './redux/store'
-import {domLoaded, Phase, setMessages, setPhase} from "./redux/actions"
-import {isConnected, isDisconnected, isLoading, isSearching, isSelectingOptions, parseMessages} from "./dom";
+import {domLoaded, Phase, setMessages, setPanelState, setPhase} from "./redux/actions"
+import {
+    isConnected, isDisconnected, isLoading, isSearching, isSelectingOptions, listenToPanelUpdate,
+    parseMessages
+} from "./dom";
 
 function getPhase() {
     const loading = isLoading();
@@ -46,4 +49,8 @@ export function startObservingDom() {
             subtree: true
         })
     });
+}
+
+export function observePanel() {
+    listenToPanelUpdate(panelState => dispatch(setPanelState(panelState)));
 }

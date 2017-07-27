@@ -7,6 +7,9 @@ import {TimeoutError, waitFor} from "./redux/store";
 export class HuisoDisconnectedError extends Error {
 }
 
+export class DisabledError extends Error {
+}
+
 export async function sleep(seconds, ignoreDisconnected = false) {
     if (ignoreDisconnected) {
         await new Promise(resolve => setTimeout(resolve, seconds * 1000));
@@ -14,7 +17,12 @@ export async function sleep(seconds, ignoreDisconnected = false) {
     }
 
     try {
-        await waitFor(state => state.phase !== Phase.CONNECTED, seconds);
+        const state = await waitFor(state => state.phase !== Phase.CONNECTED || !state.enabled, seconds);
+        if (!state.enabled) {
+            throw new DisabledError();
+        } else {
+            throw new HuisoDisconnectedError();
+        }
     } catch (e) {
         if (e instanceof TimeoutError) {
             return;
@@ -22,7 +30,6 @@ export async function sleep(seconds, ignoreDisconnected = false) {
             throw e;
         }
     }
-    throw new HuisoDisconnectedError();
 }
 
 export async function onlySend(...messages) {
@@ -43,7 +50,10 @@ export function check(string, ...includes) {
 
 export async function isMessagesPresent(timeout) {
     try {
-        await waitFor(state => state.messages.length > 0, timeout);
+        const state = await waitFor(state => state.messages.length > 0 || !state.enabled, timeout);
+        if (!state.enabled) {
+            throw new DisabledError();
+        }
         return true;
     } catch (e) {
         if ((e instanceof TimeoutError)) {
@@ -72,8 +82,10 @@ export class Messenger {
     }
 
     async waitForResponse() {
-        const state = await waitFor(state => this.found(state.messages) || state.phase !== Phase.CONNECTED);
-        if (state.phase !== Phase.CONNECTED) {
+        const state = await waitFor(state => this.found(state.messages) || state.phase !== Phase.CONNECTED || !state.enabled);
+        if (!state.enabled) {
+            throw new DisabledError();
+        } else if (state.phase !== Phase.CONNECTED) {
             throw new HuisoDisconnectedError();
         }
         const messages = this.filterStrangersMessages(state.messages);

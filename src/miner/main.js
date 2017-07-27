@@ -1,10 +1,10 @@
 "use strict";
-import {startObservingDom} from './mutation-observer'
+import {observePanel, startObservingDom} from './mutation-observer'
 import {subscribe, TimeoutError, waitFor} from "./redux/store"
 import {addPanel, disconnect, mockConfirmDialog, registerPanelComponent, startConversation} from "./dom";
 import {Phase} from "./redux/actions";
 import {devideByZero} from "./dialogs/zero";
-import {HuisoDisconnectedError, isMessagesPresent, Messenger, sleep} from "./controls";
+import {DisabledError, HuisoDisconnectedError, isMessagesPresent, Messenger, sleep} from "./controls";
 
 async function main() {
     startObservingDom();
@@ -15,8 +15,9 @@ async function main() {
     mockConfirmDialog();
     registerPanelComponent();
     addPanel();
+    observePanel();
 
-    await waitFor(state => state.phase === Phase.CONNECTED);
+    await waitFor(state => state.phase === Phase.CONNECTED && state.enabled);
     if (await isMessagesPresent(0.2)) {
         await sleep(1, true);
         disconnect();
@@ -26,7 +27,7 @@ async function main() {
 
     while (true) {
         try {
-            await waitFor(state => state.phase === Phase.CONNECTED);
+            await waitFor(state => state.phase === Phase.CONNECTED && state.enabled);
             console.log('Start mining a new huiso');
             const messenger = new Messenger();
 
@@ -45,6 +46,8 @@ async function main() {
                 await sleep(1, true);
                 disconnect();
                 startConversation();
+            } else if (e instanceof DisabledError) {
+                console.log('Disabled');
             } else {
                 throw e;
             }

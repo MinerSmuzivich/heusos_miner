@@ -68,18 +68,22 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["f"] = domLoaded;
-/* harmony export (immutable) */ __webpack_exports__["h"] = setPhase;
-/* harmony export (immutable) */ __webpack_exports__["g"] = setMessages;
+/* harmony export (immutable) */ __webpack_exports__["g"] = domLoaded;
+/* harmony export (immutable) */ __webpack_exports__["j"] = setPhase;
+/* harmony export (immutable) */ __webpack_exports__["h"] = setMessages;
+/* harmony export (immutable) */ __webpack_exports__["i"] = setPanelState;
 
 const DOM_LOADED = 'DOM_LOADED';
 /* harmony export (immutable) */ __webpack_exports__["b"] = DOM_LOADED;
 
 const SET_PHASE = 'SET_PHASE';
-/* harmony export (immutable) */ __webpack_exports__["e"] = SET_PHASE;
+/* harmony export (immutable) */ __webpack_exports__["f"] = SET_PHASE;
 
 const SET_MESSAGES = 'SET_MESSAGES';
 /* harmony export (immutable) */ __webpack_exports__["d"] = SET_MESSAGES;
+
+const SET_PANEL_STATE = 'SET_PANEL_STATE';
+/* harmony export (immutable) */ __webpack_exports__["e"] = SET_PANEL_STATE;
 
 
 const Phase = {
@@ -117,6 +121,13 @@ function setMessages(messages) {
     return {
         type: SET_MESSAGES,
         messages
+    }
+}
+
+function setPanelState(panelState) {
+    return {
+        type: SET_PANEL_STATE,
+        panelState
     }
 }
 
@@ -180,14 +191,15 @@ function subscribe(listener) {
 /* harmony export (immutable) */ __webpack_exports__["g"] = isSearching;
 /* harmony export (immutable) */ __webpack_exports__["d"] = isConnected;
 /* harmony export (immutable) */ __webpack_exports__["e"] = isDisconnected;
-/* harmony export (immutable) */ __webpack_exports__["i"] = mockConfirmDialog;
+/* harmony export (immutable) */ __webpack_exports__["j"] = mockConfirmDialog;
 /* harmony export (immutable) */ __webpack_exports__["a"] = addPanel;
-/* harmony export (immutable) */ __webpack_exports__["k"] = registerPanelComponent;
-/* harmony export (immutable) */ __webpack_exports__["m"] = startConversation;
+/* harmony export (immutable) */ __webpack_exports__["l"] = registerPanelComponent;
+/* harmony export (immutable) */ __webpack_exports__["n"] = startConversation;
 /* harmony export (immutable) */ __webpack_exports__["c"] = disconnect;
-/* harmony export (immutable) */ __webpack_exports__["j"] = parseMessages;
-/* harmony export (immutable) */ __webpack_exports__["l"] = setMessage;
+/* harmony export (immutable) */ __webpack_exports__["k"] = parseMessages;
+/* harmony export (immutable) */ __webpack_exports__["m"] = setMessage;
 /* harmony export (immutable) */ __webpack_exports__["b"] = clickSend;
+/* harmony export (immutable) */ __webpack_exports__["i"] = listenToPanelUpdate;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redux_actions__ = __webpack_require__(0);
 
@@ -272,6 +284,12 @@ function setMessage(message) {
 
 function clickSend() {
     document.getElementById('sendMessageBtn').click();
+}
+
+function listenToPanelUpdate(listener) {
+    document
+        .querySelector('#miner-panel')
+        .addEventListener('change', e => listener(e.detail));
 }
 
 /***/ }),
@@ -956,10 +974,10 @@ function toArray(varargs) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["f"] = sleep;
-/* harmony export (immutable) */ __webpack_exports__["e"] = onlySend;
-/* harmony export (immutable) */ __webpack_exports__["c"] = check;
-/* harmony export (immutable) */ __webpack_exports__["d"] = isMessagesPresent;
+/* harmony export (immutable) */ __webpack_exports__["g"] = sleep;
+/* harmony export (immutable) */ __webpack_exports__["f"] = onlySend;
+/* harmony export (immutable) */ __webpack_exports__["d"] = check;
+/* harmony export (immutable) */ __webpack_exports__["e"] = isMessagesPresent;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dom__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__redux_actions__ = __webpack_require__(0);
@@ -972,7 +990,12 @@ function toArray(varargs) {
 
 class HuisoDisconnectedError extends Error {
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = HuisoDisconnectedError;
+/* harmony export (immutable) */ __webpack_exports__["b"] = HuisoDisconnectedError;
+
+
+class DisabledError extends Error {
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = DisabledError;
 
 
 async function sleep(seconds, ignoreDisconnected = false) {
@@ -982,7 +1005,12 @@ async function sleep(seconds, ignoreDisconnected = false) {
     }
 
     try {
-        await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED, seconds);
+        const state = await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED || !state.enabled, seconds);
+        if (!state.enabled) {
+            throw new DisabledError();
+        } else {
+            throw new HuisoDisconnectedError();
+        }
     } catch (e) {
         if (e instanceof __WEBPACK_IMPORTED_MODULE_3__redux_store__["a" /* TimeoutError */]) {
             return;
@@ -990,7 +1018,6 @@ async function sleep(seconds, ignoreDisconnected = false) {
             throw e;
         }
     }
-    throw new HuisoDisconnectedError();
 }
 
 async function onlySend(...messages) {
@@ -999,7 +1026,7 @@ async function onlySend(...messages) {
     const chars = [...message];
     for (let i = 0; i < chars.length; i++) {
         await sleep(0.15);
-        Object(__WEBPACK_IMPORTED_MODULE_0__dom__["l" /* setMessage */])(chars.slice(0, i + 1).reduce((s, c) => s + c, ''));
+        Object(__WEBPACK_IMPORTED_MODULE_0__dom__["m" /* setMessage */])(chars.slice(0, i + 1).reduce((s, c) => s + c, ''));
     }
     Object(__WEBPACK_IMPORTED_MODULE_0__dom__["b" /* clickSend */])();
     console.log('Sent:', message);
@@ -1011,7 +1038,10 @@ function check(string, ...includes) {
 
 async function isMessagesPresent(timeout) {
     try {
-        await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => state.messages.length > 0, timeout);
+        const state = await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => state.messages.length > 0 || !state.enabled, timeout);
+        if (!state.enabled) {
+            throw new DisabledError();
+        }
         return true;
     } catch (e) {
         if ((e instanceof __WEBPACK_IMPORTED_MODULE_3__redux_store__["a" /* TimeoutError */])) {
@@ -1040,8 +1070,10 @@ class Messenger {
     }
 
     async waitForResponse() {
-        const state = await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => this.found(state.messages) || state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED);
-        if (state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED) {
+        const state = await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => this.found(state.messages) || state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED || !state.enabled);
+        if (!state.enabled) {
+            throw new DisabledError();
+        } else if (state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED) {
             throw new HuisoDisconnectedError();
         }
         const messages = this.filterStrangersMessages(state.messages);
@@ -1064,7 +1096,7 @@ class Messenger {
     }
 
 }
-/* harmony export (immutable) */ __webpack_exports__["b"] = Messenger;
+/* harmony export (immutable) */ __webpack_exports__["c"] = Messenger;
 
 
 /***/ }),
@@ -1088,44 +1120,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 async function main() {
-    Object(__WEBPACK_IMPORTED_MODULE_0__mutation_observer__["a" /* startObservingDom */])();
+    Object(__WEBPACK_IMPORTED_MODULE_0__mutation_observer__["b" /* startObservingDom */])();
     Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["c" /* subscribe */])(state => console.debug('State:', state));
 
     await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.domLoaded);
 
-    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["i" /* mockConfirmDialog */])();
-    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["k" /* registerPanelComponent */])();
+    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["j" /* mockConfirmDialog */])();
+    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["l" /* registerPanelComponent */])();
     Object(__WEBPACK_IMPORTED_MODULE_2__dom__["a" /* addPanel */])();
+    Object(__WEBPACK_IMPORTED_MODULE_0__mutation_observer__["a" /* observePanel */])();
 
-    await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED);
-    if (await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["d" /* isMessagesPresent */])(0.2)) {
-        await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
+    await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED && state.enabled);
+    if (await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["e" /* isMessagesPresent */])(0.2)) {
+        await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["g" /* sleep */])(1, true);
         Object(__WEBPACK_IMPORTED_MODULE_2__dom__["c" /* disconnect */])();
-        Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
-        await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
+        Object(__WEBPACK_IMPORTED_MODULE_2__dom__["n" /* startConversation */])();
+        await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["g" /* sleep */])(1, true);
     }
 
     while (true) {
         try {
-            await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED);
+            await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED && state.enabled);
             console.log('Start mining a new huiso');
-            const messenger = new __WEBPACK_IMPORTED_MODULE_5__controls__["b" /* Messenger */]();
+            const messenger = new __WEBPACK_IMPORTED_MODULE_5__controls__["c" /* Messenger */]();
 
             await Object(__WEBPACK_IMPORTED_MODULE_4__dialogs_zero__["a" /* devideByZero */])(messenger);
-            await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(20, true);
+            await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["g" /* sleep */])(20, true);
 
             Object(__WEBPACK_IMPORTED_MODULE_2__dom__["c" /* disconnect */])();
-            Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
+            Object(__WEBPACK_IMPORTED_MODULE_2__dom__["n" /* startConversation */])();
         } catch (e) {
-            if (e instanceof __WEBPACK_IMPORTED_MODULE_5__controls__["a" /* HuisoDisconnectedError */]) {
+            if (e instanceof __WEBPACK_IMPORTED_MODULE_5__controls__["b" /* HuisoDisconnectedError */]) {
                 console.log('Huiso disconnected');
-                await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
-                Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
+                await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["g" /* sleep */])(1, true);
+                Object(__WEBPACK_IMPORTED_MODULE_2__dom__["n" /* startConversation */])();
             } else if (e instanceof __WEBPACK_IMPORTED_MODULE_1__redux_store__["a" /* TimeoutError */]) {
                 console.log('Timeout');
-                await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
+                await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["g" /* sleep */])(1, true);
                 Object(__WEBPACK_IMPORTED_MODULE_2__dom__["c" /* disconnect */])();
-                Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
+                Object(__WEBPACK_IMPORTED_MODULE_2__dom__["n" /* startConversation */])();
+            } else if (e instanceof __WEBPACK_IMPORTED_MODULE_5__controls__["a" /* DisabledError */]) {
+                console.log('Disabled');
             } else {
                 throw e;
             }
@@ -1141,7 +1176,8 @@ const ignored = main();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = startObservingDom;
+/* harmony export (immutable) */ __webpack_exports__["b"] = startObservingDom;
+/* harmony export (immutable) */ __webpack_exports__["a"] = observePanel;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__redux_store__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redux_actions__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom__ = __webpack_require__(2);
@@ -1179,13 +1215,13 @@ function getPhase() {
 }
 
 const observer = new MutationObserver(() => {
-    Object(__WEBPACK_IMPORTED_MODULE_0__redux_store__["b" /* dispatch */])(Object(__WEBPACK_IMPORTED_MODULE_1__redux_actions__["h" /* setPhase */])(getPhase()));
-    Object(__WEBPACK_IMPORTED_MODULE_0__redux_store__["b" /* dispatch */])(Object(__WEBPACK_IMPORTED_MODULE_1__redux_actions__["g" /* setMessages */])(Object(__WEBPACK_IMPORTED_MODULE_2__dom__["j" /* parseMessages */])()));
+    Object(__WEBPACK_IMPORTED_MODULE_0__redux_store__["b" /* dispatch */])(Object(__WEBPACK_IMPORTED_MODULE_1__redux_actions__["j" /* setPhase */])(getPhase()));
+    Object(__WEBPACK_IMPORTED_MODULE_0__redux_store__["b" /* dispatch */])(Object(__WEBPACK_IMPORTED_MODULE_1__redux_actions__["h" /* setMessages */])(Object(__WEBPACK_IMPORTED_MODULE_2__dom__["k" /* parseMessages */])()));
 });
 
 function startObservingDom() {
     document.addEventListener("DOMContentLoaded", () => {
-        Object(__WEBPACK_IMPORTED_MODULE_0__redux_store__["b" /* dispatch */])(Object(__WEBPACK_IMPORTED_MODULE_1__redux_actions__["f" /* domLoaded */])());
+        Object(__WEBPACK_IMPORTED_MODULE_0__redux_store__["b" /* dispatch */])(Object(__WEBPACK_IMPORTED_MODULE_1__redux_actions__["g" /* domLoaded */])());
         observer.observe(document, {
             childList: true,
             attributes: true,
@@ -1194,6 +1230,11 @@ function startObservingDom() {
         })
     });
 }
+
+function observePanel() {
+    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["i" /* listenToPanelUpdate */])(panelState => Object(__WEBPACK_IMPORTED_MODULE_0__redux_store__["b" /* dispatch */])(Object(__WEBPACK_IMPORTED_MODULE_1__redux_actions__["i" /* setPanelState */])(panelState)));
+}
+
 
 /***/ }),
 /* 15 */
@@ -1784,14 +1825,18 @@ function domLoaded(oldDomLoaded = false, action) {
 }
 
 function phase(oldPhase = __WEBPACK_IMPORTED_MODULE_1__actions__["c" /* Phase */].INITIAL, action) {
-    return action.type === __WEBPACK_IMPORTED_MODULE_1__actions__["e" /* SET_PHASE */] ? action.phase : oldPhase;
+    return action.type === __WEBPACK_IMPORTED_MODULE_1__actions__["f" /* SET_PHASE */] ? action.phase : oldPhase;
 }
 
 function messages(oldMessages = [], action) {
     return action.type === __WEBPACK_IMPORTED_MODULE_1__actions__["d" /* SET_MESSAGES */] ? action.messages : oldMessages;
 }
 
-const reducer = Object(__WEBPACK_IMPORTED_MODULE_0_redux__["a" /* combineReducers */])({domLoaded, phase, messages});
+function enabled(oldEnabled = true, action) {
+    return action.type === __WEBPACK_IMPORTED_MODULE_1__actions__["e" /* SET_PANEL_STATE */] ? action.panelState.enabled : oldEnabled;
+}
+
+const reducer = Object(__WEBPACK_IMPORTED_MODULE_0_redux__["a" /* combineReducers */])({domLoaded, phase, messages, enabled});
 
 /* harmony default export */ __webpack_exports__["a"] = (reducer);
 
@@ -1808,13 +1853,13 @@ async function devideByZero(messenger) {
     let response;
     response = await messenger.send('1:0 сможешь решить?', '1/0 сколько будет?', '1 на 0 сможешь разделить?');
 
-    const huisosAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'ноль', 'нуль', 'один', 'бесконечн', '0', '1');
-    const schoolboyAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'не делит', 'нельзя');
+    const huisosAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["d" /* check */])(r, 'ноль', 'нуль', 'один', 'бесконечн', '0', '1');
+    const schoolboyAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["d" /* check */])(r, 'не делит', 'нельзя');
     const yesAnswer = (r) => ['да', 'могу', 'конечн', 'конеш'].includes(r);
-    const drocherAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'хуй', 'дроч', 'стоит', 'конч', 'член', 'шлюх', 'пошал', 'сладен', 'секс');
-    const otherAnswers = (r) => ['не', 'нет'].includes(r) || Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'гуман', 'лет', 'сколько тебе');
+    const drocherAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["d" /* check */])(r, 'хуй', 'дроч', 'стоит', 'конч', 'член', 'шлюх', 'пошал', 'сладен', 'секс');
+    const otherAnswers = (r) => ['не', 'нет'].includes(r) || Object(__WEBPACK_IMPORTED_MODULE_0__controls__["d" /* check */])(r, 'гуман', 'лет', 'сколько тебе');
 
-    if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(response, 'лет', 'сколько тебе')) {
+    if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["d" /* check */])(response, 'лет', 'сколько тебе')) {
         await messenger.send('мне 27');
         response = await messenger.send('так можешь?', 'так ты можешь разделить?');
     }
@@ -1838,15 +1883,15 @@ async function devideByZero(messenger) {
 
     if (drocherAnswer(response)) {
         response = await messenger.send('хуй покажешь в скайпе?');
-        if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(response, 'да', 'покажу')) {
-            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('добавляйся');
-            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('lera.lera872');
-            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* sleep */])(5);
+        if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["d" /* check */])(response, 'да', 'покажу')) {
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('добавляйся');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('lera.lera872');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["g" /* sleep */])(5);
         } else {
-            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('ну и пошел нахуй');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('ну и пошел нахуй');
         }
         return;
-    } else if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(response, 'гуман')) {
+    } else if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["d" /* check */])(response, 'гуман')) {
         return;
     } else if (response === 'нет') {
         response = await messenger.send('пидара ответ');
@@ -1859,20 +1904,20 @@ async function devideByZero(messenger) {
         response = await messenger.send('мамка запретила?', 'а че так вдруг нельзя? мамка запретила?');
     } else if (huisosAnswer(response)) {
         if (response.length > 20) {
-            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('"' + response + '""');
-            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('че за хуйню ты тут пишешь?');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('"' + response + '""');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('че за хуйню ты тут пишешь?');
             response = await messenger.send('ты че, совсем тупой?', 'тупорылый штоле?');
         } else {
-            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])(response + '?');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])(response + '?');
             response = await messenger.send('ты че, совсем тупой?', 'тупорылый штоле?', 'а не хуесос ли ты?');
         }
     }
 
-    await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('в скайпе не зассышь базарить?', 'в скайпе базарить не зассышь?');
+    await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('в скайпе не зассышь базарить?', 'в скайпе базарить не зассышь?');
     if (Math.random() < 0.5) {
-        await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('добавляйся');
+        await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('добавляйся');
     }
-    await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('lera.lera872');
+    await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* onlySend */])('lera.lera872');
 }
 
 /***/ })

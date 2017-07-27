@@ -81,3 +81,9 @@ export function setMessage(message) {
 export function clickSend() {
     document.getElementById('sendMessageBtn').click();
 }
+
+export function listenToPanelUpdate(listener) {
+    document
+        .querySelector('#miner-panel')
+        .addEventListener('change', e => listener(e.detail));
+}
