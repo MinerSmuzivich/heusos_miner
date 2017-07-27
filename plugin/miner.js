@@ -1140,7 +1140,8 @@ async function main() {
 
     while (true) {
         try {
-            await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED && state.enabled);
+            await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.enabled, 100000);
+            await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED);
             console.log('Start mining a new huiso');
             const messenger = new __WEBPACK_IMPORTED_MODULE_5__controls__["c" /* Messenger */]();
 

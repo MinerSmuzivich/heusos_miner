@@ -27,7 +27,8 @@ async function main() {
 
     while (true) {
         try {
-            await waitFor(state => state.phase === Phase.CONNECTED && state.enabled);
+            await waitFor(state => state.enabled, 100000);
+            await waitFor(state => state.phase === Phase.CONNECTED);
             console.log('Start mining a new huiso');
             const messenger = new Messenger();
 
