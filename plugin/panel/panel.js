@@ -13,4 +13,5 @@ class MinerPanel extends Polymer.Element {
     this.enabled = !this.enabled;
   }
 }
+
 customElements.define(MinerPanel.is, MinerPanel);

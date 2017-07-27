@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -128,8 +128,8 @@ function setMessages(messages) {
 /* harmony export (immutable) */ __webpack_exports__["d"] = waitFor;
 /* harmony export (immutable) */ __webpack_exports__["b"] = dispatch;
 /* harmony export (immutable) */ __webpack_exports__["c"] = subscribe;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__reducer__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__reducer__ = __webpack_require__(30);
 
 
 
@@ -175,12 +175,116 @@ function subscribe(listener) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createStore__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__combineReducers__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bindActionCreators__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__compose__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warning__ = __webpack_require__(8);
+/* harmony export (immutable) */ __webpack_exports__["f"] = isLoading;
+/* harmony export (immutable) */ __webpack_exports__["h"] = isSelectingOptions;
+/* harmony export (immutable) */ __webpack_exports__["g"] = isSearching;
+/* harmony export (immutable) */ __webpack_exports__["d"] = isConnected;
+/* harmony export (immutable) */ __webpack_exports__["e"] = isDisconnected;
+/* harmony export (immutable) */ __webpack_exports__["i"] = mockConfirmDialog;
+/* harmony export (immutable) */ __webpack_exports__["a"] = addPanel;
+/* harmony export (immutable) */ __webpack_exports__["k"] = registerPanelComponent;
+/* harmony export (immutable) */ __webpack_exports__["m"] = startConversation;
+/* harmony export (immutable) */ __webpack_exports__["c"] = disconnect;
+/* harmony export (immutable) */ __webpack_exports__["j"] = parseMessages;
+/* harmony export (immutable) */ __webpack_exports__["l"] = setMessage;
+/* harmony export (immutable) */ __webpack_exports__["b"] = clickSend;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redux_actions__ = __webpack_require__(0);
+
+
+
+
+function isContainsClass(selector, clazz) {
+    const element = document.querySelector(selector);
+    return element.classList.contains(clazz);
+}
+
+function notHidden(selector) {
+    return !isContainsClass(selector, 'hides');
+}
+
+function isLoading() {
+    return notHidden('.load_init_step');
+}
+
+function isSelectingOptions() {
+    return notHidden('.main_step');
+}
+
+function isSearching() {
+    return notHidden('.search_company_step');
+}
+
+function isConnected() {
+    return notHidden('.st_chatbox') && !notHidden('.status-end') && !notHidden('.search_company_step');
+}
+
+function isDisconnected() {
+    return notHidden('.status-end');
+}
+
+function mockConfirmDialog() {
+    const head = document.getElementsByTagName('head').item(0);
+    const js = document.createTextNode('window.confirm = function() { return true; };');
+    const script = document.createElement('script');
+    script.appendChild(js);
+    head.appendChild(script);
+}
+
+function addPanel() {
+    const panel = document.createElement('miner-panel');
+    panel.setAttribute('id', 'miner-panel');
+    document.body.appendChild(panel);
+}
+
+function registerPanelComponent() {
+    const script = document.createElement('link');
+    script.setAttribute('href', chrome.extension.getURL("panel/panel.html"));
+    script.setAttribute('rel', 'import');
+    document.body.appendChild(script);
+}
+
+function startConversation() {
+    document.getElementById('new_talk_but').click();
+}
+
+function disconnect() {
+    if (isContainsClass('#sendMessageBtn', 'disabled')) {
+        console.error('Disconnect is disabled');
+    }
+    document.getElementById('closeDialogBtn').click();
+}
+
+function parseMessages() {
+    const result = [];
+    for (const div of Object(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* toArray */])(document.querySelectorAll('.mess_block'))) {
+        const author = div.classList.contains('window_chat_dialog_block_nekto') ? __WEBPACK_IMPORTED_MODULE_1__redux_actions__["a" /* Author */].STRANGER : __WEBPACK_IMPORTED_MODULE_1__redux_actions__["a" /* Author */].ME;
+        const text = div.querySelector('.window_chat_dialog_text').textContent;
+        result.push({author, text});
+    }
+    return result;
+}
+
+function setMessage(message) {
+    const inputDiv = document.querySelector('.emojionearea-editor');
+    inputDiv.innerHTML = message;
+}
+
+function clickSend() {
+    document.getElementById('sendMessageBtn').click();
+}
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createStore__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__combineReducers__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__bindActionCreators__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__applyMiddleware__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__compose__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_warning__ = __webpack_require__(9);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return __WEBPACK_IMPORTED_MODULE_0__createStore__["b"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return __WEBPACK_IMPORTED_MODULE_1__combineReducers__["a"]; });
 /* unused harmony reexport bindActionCreators */
@@ -204,10 +308,10 @@ if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' 
 }
 
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4)))
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -397,14 +501,14 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ActionTypes; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = createStore;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_es_isPlainObject__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_symbol_observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_symbol_observable__);
 
 
@@ -656,13 +760,13 @@ var ActionTypes = {
 }
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseGetTag_js__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__getPrototype_js__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__isObjectLike_js__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__baseGetTag_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__getPrototype_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__isObjectLike_js__ = __webpack_require__(22);
 
 
 
@@ -728,11 +832,11 @@ function isPlainObject(value) {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__root_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__root_js__ = __webpack_require__(16);
 
 
 /** Built-in value references. */
@@ -742,7 +846,7 @@ var Symbol = __WEBPACK_IMPORTED_MODULE_0__root_js__["a" /* default */].Symbol;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports) {
 
 var g;
@@ -769,7 +873,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -797,7 +901,7 @@ function warning(message) {
 }
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -836,110 +940,6 @@ function compose() {
 }
 
 /***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["f"] = isLoading;
-/* harmony export (immutable) */ __webpack_exports__["h"] = isSelectingOptions;
-/* harmony export (immutable) */ __webpack_exports__["g"] = isSearching;
-/* harmony export (immutable) */ __webpack_exports__["d"] = isConnected;
-/* harmony export (immutable) */ __webpack_exports__["e"] = isDisconnected;
-/* harmony export (immutable) */ __webpack_exports__["i"] = mockConfirmDialog;
-/* harmony export (immutable) */ __webpack_exports__["a"] = addPanel;
-/* harmony export (immutable) */ __webpack_exports__["k"] = registerPanelComponent;
-/* harmony export (immutable) */ __webpack_exports__["m"] = startConversation;
-/* harmony export (immutable) */ __webpack_exports__["c"] = disconnect;
-/* harmony export (immutable) */ __webpack_exports__["j"] = parseMessages;
-/* harmony export (immutable) */ __webpack_exports__["l"] = setMessage;
-/* harmony export (immutable) */ __webpack_exports__["b"] = clickSend;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redux_actions__ = __webpack_require__(0);
-
-
-
-
-function isContainsClass(selector, clazz) {
-    const element = document.querySelector(selector);
-    return element.classList.contains(clazz);
-}
-
-function notHidden(selector) {
-    return !isContainsClass(selector, 'hides');
-}
-
-function isLoading() {
-    return notHidden('.load_init_step');
-}
-
-function isSelectingOptions() {
-    return notHidden('.main_step');
-}
-
-function isSearching() {
-    return notHidden('.search_company_step');
-}
-
-function isConnected() {
-    return notHidden('.st_chatbox') && !notHidden('.status-end') && !notHidden('.search_company_step');
-}
-
-function isDisconnected() {
-    return notHidden('.status-end');
-}
-
-function mockConfirmDialog() {
-    const head = document.getElementsByTagName('head').item(0);
-    const js = document.createTextNode('window.confirm = function() { return true; };');
-    const script = document.createElement('script');
-    script.appendChild(js);
-    head.appendChild(script);
-}
-
-function addPanel() {
-    const panel = document.createElement('miner-panel');
-    panel.setAttribute('id', 'miner-panel');
-    document.body.appendChild(panel);
-}
-
-function registerPanelComponent() {
-    const script = document.createElement('link');
-    script.setAttribute('href', chrome.extension.getURL("panel/panel.html"));
-    script.setAttribute('rel', 'import');
-    document.body.appendChild(script);
-}
-
-function startConversation() {
-    document.getElementById('new_talk_but').click();
-}
-
-function disconnect() {
-    if (isContainsClass('#sendMessageBtn', 'disabled')) {
-        console.error('Disconnect is disabled');
-    }
-    document.getElementById('closeDialogBtn').click();
-}
-
-function parseMessages() {
-    const result = [];
-    for (const div of Object(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* toArray */])(document.querySelectorAll('.mess_block'))) {
-        const author = div.classList.contains('window_chat_dialog_block_nekto') ? __WEBPACK_IMPORTED_MODULE_1__redux_actions__["a" /* Author */].STRANGER : __WEBPACK_IMPORTED_MODULE_1__redux_actions__["a" /* Author */].ME;
-        const text = div.querySelector('.window_chat_dialog_text').textContent;
-        result.push({author, text});
-    }
-    return result;
-}
-
-function setMessage(message) {
-    const inputDiv = document.querySelector('.emojionearea-editor');
-    inputDiv.innerHTML = message;
-}
-
-function clickSend() {
-    document.getElementById('sendMessageBtn').click();
-}
-
-/***/ }),
 /* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -956,13 +956,14 @@ function toArray(varargs) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mutation_observer__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redux_store__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dom__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__redux_actions__ = __webpack_require__(0);
-
+/* harmony export (immutable) */ __webpack_exports__["f"] = sleep;
+/* harmony export (immutable) */ __webpack_exports__["e"] = onlySend;
+/* harmony export (immutable) */ __webpack_exports__["c"] = check;
+/* harmony export (immutable) */ __webpack_exports__["d"] = isMessagesPresent;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dom__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__redux_actions__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__redux_store__ = __webpack_require__(1);
 
 
 
@@ -971,12 +972,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 class HuisoDisconnectedError extends Error {
 }
+/* harmony export (immutable) */ __webpack_exports__["a"] = HuisoDisconnectedError;
 
-async function sleep(seconds) {
+
+async function sleep(seconds, ignoreDisconnected = false) {
+    if (ignoreDisconnected) {
+        await new Promise(resolve => setTimeout(resolve, seconds * 1000));
+        return;
+    }
+
     try {
-        console.log(await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase !== __WEBPACK_IMPORTED_MODULE_4__redux_actions__["c" /* Phase */].CONNECTED, seconds));
+        await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED, seconds);
     } catch (e) {
-        if (e instanceof __WEBPACK_IMPORTED_MODULE_1__redux_store__["a" /* TimeoutError */]) {
+        if (e instanceof __WEBPACK_IMPORTED_MODULE_3__redux_store__["a" /* TimeoutError */]) {
             return;
         } else {
             throw e;
@@ -986,18 +994,32 @@ async function sleep(seconds) {
 }
 
 async function onlySend(...messages) {
+    await sleep(1);
     const message = messages[Math.floor(Math.random() * messages.length)];
     const chars = [...message];
     for (let i = 0; i < chars.length; i++) {
-        await sleep(0.05);
-        Object(__WEBPACK_IMPORTED_MODULE_3__dom__["l" /* setMessage */])(chars.slice(0, i).reduce((s, c) => s + c, ''));
+        await sleep(0.15);
+        Object(__WEBPACK_IMPORTED_MODULE_0__dom__["l" /* setMessage */])(chars.slice(0, i + 1).reduce((s, c) => s + c, ''));
     }
-    Object(__WEBPACK_IMPORTED_MODULE_3__dom__["b" /* clickSend */])();
+    Object(__WEBPACK_IMPORTED_MODULE_0__dom__["b" /* clickSend */])();
+    console.log('Sent:', message);
 }
 
-
 function check(string, ...includes) {
-    return Object(__WEBPACK_IMPORTED_MODULE_2__utils__["a" /* toArray */])(includes).some((s) => string.includes(s));
+    return Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* toArray */])(includes).some((s) => string.includes(s));
+}
+
+async function isMessagesPresent(timeout) {
+    try {
+        await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => state.messages.length > 0, timeout);
+        return true;
+    } catch (e) {
+        if ((e instanceof __WEBPACK_IMPORTED_MODULE_3__redux_store__["a" /* TimeoutError */])) {
+            return false;
+        } else {
+            throw e;
+        }
+    }
 }
 
 class Messenger {
@@ -1006,21 +1028,28 @@ class Messenger {
     }
 
     filterStrangersMessages(messages) {
-        return messages.filter(m => m.author === __WEBPACK_IMPORTED_MODULE_4__redux_actions__["a" /* Author */].STRANGER).map(m => m.text);
+        return messages.filter(m => m.author === __WEBPACK_IMPORTED_MODULE_2__redux_actions__["a" /* Author */].STRANGER).map(m => m.text);
     }
 
     found(messages) {
-        return this.filterStrangersMessages(messages).length > this.filterStrangersMessages(this.messages);
+        console.debug('Old messages:', this.messages);
+        console.debug('New messages:', messages);
+        const result = this.filterStrangersMessages(messages).length > this.filterStrangersMessages(this.messages).length;
+        console.debug('New message found:', result);
+        return result
     }
-    
+
     async waitForResponse() {
-        const state = await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => this.found(state.messages));
+        const state = await Object(__WEBPACK_IMPORTED_MODULE_3__redux_store__["d" /* waitFor */])(state => this.found(state.messages) || state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED);
+        if (state.phase !== __WEBPACK_IMPORTED_MODULE_2__redux_actions__["c" /* Phase */].CONNECTED) {
+            throw new HuisoDisconnectedError();
+        }
         const messages = this.filterStrangersMessages(state.messages);
-        this.messages = messages;
+        this.messages = state.messages;
         return messages[messages.length - 1];
     }
 
-    normalizeResponse(response) {
+    static normalizeResponse(response) {
         return response
             .toLowerCase()
             .trim()
@@ -1029,116 +1058,74 @@ class Messenger {
 
     async send(...messages) {
         await onlySend(...messages);
-        const response = this.normalizeResponse(await this.waitForResponse());
-        console.log(response);
+        const response = Messenger.normalizeResponse(await this.waitForResponse());
+        console.log('Response:', response);
         return response;
     }
 
 }
+/* harmony export (immutable) */ __webpack_exports__["b"] = Messenger;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__mutation_observer__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redux_store__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__redux_actions__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dialogs_zero__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__controls__ = __webpack_require__(12);
+
+
+
+
+
+
+
 
 async function main() {
     Object(__WEBPACK_IMPORTED_MODULE_0__mutation_observer__["a" /* startObservingDom */])();
-    Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["c" /* subscribe */])(state => console.log('State:', state));
+    Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["c" /* subscribe */])(state => console.debug('State:', state));
 
     await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.domLoaded);
 
-    Object(__WEBPACK_IMPORTED_MODULE_3__dom__["i" /* mockConfirmDialog */])();
-    Object(__WEBPACK_IMPORTED_MODULE_3__dom__["k" /* registerPanelComponent */])();
-    Object(__WEBPACK_IMPORTED_MODULE_3__dom__["a" /* addPanel */])();
-    
+    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["i" /* mockConfirmDialog */])();
+    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["k" /* registerPanelComponent */])();
+    Object(__WEBPACK_IMPORTED_MODULE_2__dom__["a" /* addPanel */])();
+
+    await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED);
+    if (await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["d" /* isMessagesPresent */])(0.2)) {
+        await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
+        Object(__WEBPACK_IMPORTED_MODULE_2__dom__["c" /* disconnect */])();
+        Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
+        await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
+    }
 
     while (true) {
         try {
-            await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_4__redux_actions__["c" /* Phase */].CONNECTED);
+            await Object(__WEBPACK_IMPORTED_MODULE_1__redux_store__["d" /* waitFor */])(state => state.phase === __WEBPACK_IMPORTED_MODULE_3__redux_actions__["c" /* Phase */].CONNECTED);
             console.log('Start mining a new huiso');
-            const messenger = new Messenger();
+            const messenger = new __WEBPACK_IMPORTED_MODULE_5__controls__["b" /* Messenger */]();
 
-            let response;
-            response = await messenger.send('1:0 сможешь решить?', '1/0 сколько будет?', '1 на 0 сможешь разделить?');
+            await Object(__WEBPACK_IMPORTED_MODULE_4__dialogs_zero__["a" /* devideByZero */])(messenger);
+            await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(20, true);
 
-            const huisosAnswer = (r) => check(r, 'ноль', 'нуль', 'один', 'бесконечн', '0', '1');
-            const schoolboyAnswer = (r) => check(r, 'не делит', 'нельзя');
-            const yesAnswer = (r) => ['да', 'могу', 'конечн', 'конеш'].includes(r);
-            const drocherAnswer = (r) => check(r, 'хуй', 'дроч', 'стоит', 'конч', 'член', 'шлюх', 'пошал', 'сладен', 'секс');
-            const otherAnswers = (r) => ['не', 'нет'].includes(r) || check(r, 'гуман', 'лет', 'сколько тебе');
-
-            if (check(response, 'лет', 'сколько тебе')) {
-                await messenger.send('мне 27');
-                response = await messenger.send('так можешь?', 'так ты можешь разделить?');
-            }
-
-            if (yesAnswer(response)) {
-                response = await messenger.send('так давай, моги');
-                if (response === 'да') {
-                    response = await messenger.send('ты мозги не еби. дели давай');
-                }
-            }
-
-            if (!(huisosAnswer(response) || schoolboyAnswer(response) || yesAnswer(response) || otherAnswers(response) || drocherAnswer(response))) {
-                response = await messenger.send('так можешь?', 'так ты можешь разделить?');
-                if (yesAnswer(response)) {
-                    response = await messenger.send('так давай, моги');
-                    if (response === 'да') {
-                        response = await messenger.send('ты мозги не еби. дели давай');
-                    }
-                }
-            }
-
-            if (drocherAnswer(response)) {
-                response = await messenger.send('хуй покажешь в скайпе');
-                if (check(response, 'да', 'покажу')) {
-                    await onlySend('добавляйся');
-                    await onlySend('lera.lera872');
-                    await sleep(5);
-                } else {
-                    await onlySend('ну и пошел нахуй');
-                }
-                Object(__WEBPACK_IMPORTED_MODULE_3__dom__["c" /* disconnect */])();
-                Object(__WEBPACK_IMPORTED_MODULE_3__dom__["m" /* startConversation */])();
-                break;
-            } else if (check(response, 'гуман')) {
-                Object(__WEBPACK_IMPORTED_MODULE_3__dom__["c" /* disconnect */])();
-                Object(__WEBPACK_IMPORTED_MODULE_3__dom__["m" /* startConversation */])();
-                break;
-            } else if (response === 'нет') {
-                response = await messenger.send('пидара ответ');
-                if (response.includes('пидар')) {
-                    response = await messenger.send('ну точно хуисос');
-                }
-            } else if (response === 'не') {
-                response = await messenger.send('ничего не можешь, ничего не умеешь');
-            } else if (schoolboyAnswer(response)) {
-                response = await messenger.send('мамка запретила?', 'а че так вдруг нельзя? мамка запретила?');
-            } else if (huisosAnswer(response)) {
-                if (response.length > 20) {
-                    await onlySend(2, '"' + response + '""');
-                    await onlySend(2, 'че за хуйню ты тут пишешь?');
-                    response = await messenger.send('ты че, совсем тупой?', 'тупорылый штоле?');
-                } else {
-                    await onlySend(2, response + '?');
-                    response = await messenger.send('ты че, совсем тупой?', 'тупорылый штоле?', 'а не хуесос ли ты?');
-                }
-            }
-
-            await onlySend(4, 'в скайпе не зассышь базарить?', 'в скайпе базарить не зассышь?');
-            if (Math.random() < 0.5) {
-                await onlySend(1.5, 'добавляйся');
-            }
-            await onlySend(3, 'lera.lera872');
-            await sleep(20);
-
-            Object(__WEBPACK_IMPORTED_MODULE_3__dom__["c" /* disconnect */])();
-            Object(__WEBPACK_IMPORTED_MODULE_3__dom__["m" /* startConversation */])();
+            Object(__WEBPACK_IMPORTED_MODULE_2__dom__["c" /* disconnect */])();
+            Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
         } catch (e) {
-            if (e instanceof HuisoDisconnectedError) {
+            if (e instanceof __WEBPACK_IMPORTED_MODULE_5__controls__["a" /* HuisoDisconnectedError */]) {
                 console.log('Huiso disconnected');
-                await sleep(1);
-                Object(__WEBPACK_IMPORTED_MODULE_3__dom__["m" /* startConversation */])();
+                await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
+                Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
             } else if (e instanceof __WEBPACK_IMPORTED_MODULE_1__redux_store__["a" /* TimeoutError */]) {
                 console.log('Timeout');
-                await sleep(1);
-                Object(__WEBPACK_IMPORTED_MODULE_3__dom__["c" /* disconnect */])();
-                Object(__WEBPACK_IMPORTED_MODULE_3__dom__["m" /* startConversation */])();
+                await Object(__WEBPACK_IMPORTED_MODULE_5__controls__["f" /* sleep */])(1, true);
+                Object(__WEBPACK_IMPORTED_MODULE_2__dom__["c" /* disconnect */])();
+                Object(__WEBPACK_IMPORTED_MODULE_2__dom__["m" /* startConversation */])();
             } else {
                 throw e;
             }
@@ -1150,14 +1137,14 @@ const ignored = main();
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = startObservingDom;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__redux_store__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__redux_actions__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dom__ = __webpack_require__(2);
 
 
 
@@ -1209,13 +1196,13 @@ function startObservingDom() {
 }
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Symbol_js__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__getRawTag_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__objectToString_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Symbol_js__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__getRawTag_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__objectToString_js__ = __webpack_require__(19);
 
 
 
@@ -1247,11 +1234,11 @@ function baseGetTag(value) {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__freeGlobal_js__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__freeGlobal_js__ = __webpack_require__(17);
 
 
 /** Detect free variable `self`. */
@@ -1264,7 +1251,7 @@ var root = __WEBPACK_IMPORTED_MODULE_0__freeGlobal_js__["a" /* default */] || fr
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1273,14 +1260,14 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 /* harmony default export */ __webpack_exports__["a"] = (freeGlobal);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(8)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Symbol_js__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Symbol_js__ = __webpack_require__(7);
 
 
 /** Used for built-in method references. */
@@ -1330,7 +1317,7 @@ function getRawTag(value) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1359,11 +1346,11 @@ function objectToString(value) {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__overArg_js__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__overArg_js__ = __webpack_require__(21);
 
 
 /** Built-in value references. */
@@ -1373,7 +1360,7 @@ var getPrototype = Object(__WEBPACK_IMPORTED_MODULE_0__overArg_js__["a" /* defau
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1395,7 +1382,7 @@ function overArg(func, transform) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1431,14 +1418,14 @@ function isObjectLike(value) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(23);
+module.exports = __webpack_require__(24);
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1448,7 +1435,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ponyfill = __webpack_require__(25);
+var _ponyfill = __webpack_require__(26);
 
 var _ponyfill2 = _interopRequireDefault(_ponyfill);
 
@@ -1471,10 +1458,10 @@ if (typeof self !== 'undefined') {
 
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(24)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(25)(module)))
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -1502,7 +1489,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1531,14 +1518,14 @@ function symbolObservablePonyfill(root) {
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/* harmony export (immutable) */ __webpack_exports__["a"] = combineReducers;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createStore__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_es_isPlainObject__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_warning__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createStore__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_es_isPlainObject__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_warning__ = __webpack_require__(9);
 
 
 
@@ -1669,10 +1656,10 @@ function combineReducers(reducers) {
     return hasChanged ? nextState : state;
   };
 }
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4)))
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1726,12 +1713,12 @@ function bindActionCreators(actionCreators, dispatch) {
 }
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* unused harmony export default */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__compose__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__compose__ = __webpack_require__(10);
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 
@@ -1782,11 +1769,11 @@ function applyMiddleware() {
 }
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_redux__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions__ = __webpack_require__(0);
 
 
@@ -1807,6 +1794,86 @@ function messages(oldMessages = [], action) {
 const reducer = Object(__WEBPACK_IMPORTED_MODULE_0_redux__["a" /* combineReducers */])({domLoaded, phase, messages});
 
 /* harmony default export */ __webpack_exports__["a"] = (reducer);
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = devideByZero;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__controls__ = __webpack_require__(12);
+
+
+async function devideByZero(messenger) {
+    let response;
+    response = await messenger.send('1:0 сможешь решить?', '1/0 сколько будет?', '1 на 0 сможешь разделить?');
+
+    const huisosAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'ноль', 'нуль', 'один', 'бесконечн', '0', '1');
+    const schoolboyAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'не делит', 'нельзя');
+    const yesAnswer = (r) => ['да', 'могу', 'конечн', 'конеш'].includes(r);
+    const drocherAnswer = (r) => Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'хуй', 'дроч', 'стоит', 'конч', 'член', 'шлюх', 'пошал', 'сладен', 'секс');
+    const otherAnswers = (r) => ['не', 'нет'].includes(r) || Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(r, 'гуман', 'лет', 'сколько тебе');
+
+    if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(response, 'лет', 'сколько тебе')) {
+        await messenger.send('мне 27');
+        response = await messenger.send('так можешь?', 'так ты можешь разделить?');
+    }
+
+    if (yesAnswer(response)) {
+        response = await messenger.send('так давай, моги');
+        if (response === 'да') {
+            response = await messenger.send('ты мозги не еби. дели давай');
+        }
+    }
+
+    if (!(huisosAnswer(response) || schoolboyAnswer(response) || yesAnswer(response) || otherAnswers(response) || drocherAnswer(response))) {
+        response = await messenger.send('так можешь?', 'так ты можешь разделить?');
+        if (yesAnswer(response)) {
+            response = await messenger.send('так давай, моги');
+            if (response === 'да') {
+                response = await messenger.send('ты мозги не еби. дели давай');
+            }
+        }
+    }
+
+    if (drocherAnswer(response)) {
+        response = await messenger.send('хуй покажешь в скайпе?');
+        if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(response, 'да', 'покажу')) {
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('добавляйся');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('lera.lera872');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["f" /* sleep */])(5);
+        } else {
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('ну и пошел нахуй');
+        }
+        return;
+    } else if (Object(__WEBPACK_IMPORTED_MODULE_0__controls__["c" /* check */])(response, 'гуман')) {
+        return;
+    } else if (response === 'нет') {
+        response = await messenger.send('пидара ответ');
+        if (response.includes('пидар')) {
+            response = await messenger.send('ну точно хуисос');
+        }
+    } else if (response === 'не') {
+        response = await messenger.send('ничего не можешь, ничего не умеешь');
+    } else if (schoolboyAnswer(response)) {
+        response = await messenger.send('мамка запретила?', 'а че так вдруг нельзя? мамка запретила?');
+    } else if (huisosAnswer(response)) {
+        if (response.length > 20) {
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('"' + response + '""');
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('че за хуйню ты тут пишешь?');
+            response = await messenger.send('ты че, совсем тупой?', 'тупорылый штоле?');
+        } else {
+            await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])(response + '?');
+            response = await messenger.send('ты че, совсем тупой?', 'тупорылый штоле?', 'а не хуесос ли ты?');
+        }
+    }
+
+    await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('в скайпе не зассышь базарить?', 'в скайпе базарить не зассышь?');
+    if (Math.random() < 0.5) {
+        await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('добавляйся');
+    }
+    await Object(__WEBPACK_IMPORTED_MODULE_0__controls__["e" /* onlySend */])('lera.lera872');
+}
 
 /***/ })
 /******/ ]);

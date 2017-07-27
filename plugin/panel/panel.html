@@ -3,32 +3,37 @@
 <link rel="import" href="http://polygit.org/components/paper-button/paper-button.html">
 
 <dom-module id="miner-panel">
-  <template>
-    <style>
-      :host {
-        font-family: 'Roboto', 'Noto', sans-serif;
-        font-weight: normal;
-        font-size: 14px;
-        -webkit-font-smoothing: antialiased;
+    <template>
+        <style>
+            :host {
+                font-family: 'Roboto', 'Noto', sans-serif;
+                font-weight: normal;
+                font-size: 14px;
+                -webkit-font-smoothing: antialiased;
 
-        border-width: 4px;
-        border-style: solid;
-        border-color: var(--paper-grey-400);
-        padding: 16px;
-        background: var(--paper-grey-50);
-      }
-      paper-button {
-        background-color: var(--paper-indigo-500);
-        color: white;
-      }
-      paper-button:hover {
-        background-color: var(--paper-indigo-400);
-      }
-    </style>
-    <paper-button on-tap="onToggleTap_">
-        <template is="dom-if" if="[[enabled]]">STOP</template>
-        <template is="dom-if" if="[[!enabled]]">START</template>
+                border-width: 4px;
+                border-style: solid;
+                border-color: var(--paper-grey-400);
+                padding: 16px;
+                background: var(--paper-grey-50);
+            }
+
+            paper-button {
+                background-color: #4d657f;
+                color: white;
+            }
+
+            paper-button:hover {
+                background-color: #5d7a95;
+            }
+        </style>
+
+
+        <paper-button on-tap="onToggleTap_">
+            <template is="dom-if" if="[[enabled]]">STOP</template>
+            <template is="dom-if" if="[[!enabled]]">START</template>
+        </paper-button>
     </template>
 
-  <script src="panel.js"></script>
+    <script src="panel.js"></script>
 </dom-module>
